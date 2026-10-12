@@ -5,14 +5,14 @@
 | | |
 |---|---|
 | Họ và tên | `<điền>` |
-| MSSV (đúng bằng `LAB_STUDENT_ID` trong `.env`) | `<điền>` |
-| GitHub | `<điền: tên tài khoản>` |
+| MSSV (đúng bằng `LAB_STUDENT_ID` trong `.env`) | `2A202602588` |
+| GitHub | `taquangdung123` |
 | Trip dùng cho bài tập sập và chạy lại (xem GUIDE, bước 5) | `<điền: trip-xxxxx>` |
 
 ## Kết quả cuối
 
-- `dataset_version` của bạn: `<điền>`  (phải khớp `report/evidence/run_summary.json`)
-- Số khung hình train / val / test của bạn: `<điền>`
+- `dataset_version` của bạn: `6c42b24ea50b`  (khớp `report/evidence/run_summary.json`)
+- Số khung hình train / val / test của bạn: `721 / 153 / 145`
 - `report/verify.txt`: tạo bằng `python3 scripts/check_submission.py --save-verify` (phải có `27/27 checks passed`).
 - Ảnh chụp trong `report/screenshots/`: `airflow_graph.png`, `minio_lake.png`, `metabase_dashboard.png`, và ảnh bài tập sập/chạy lại (log task đỏ thấy trip của bạn).
 
@@ -68,7 +68,7 @@ Vì sao `dataset_version` là **băm nội dung** chứ không phải ngày gi�
 ### Câu 8
 Đọc phần `lineage` trong `manifest.json` của dataset bạn. Trả lời "dataset này được tạo từ dữ liệu nào?" bằng chính nội dung đó. Nếu một người hỏi 3 tháng sau, thông tin nào giúp tái tạo lại đúng dataset này?
 
-Manifest của `6c42b24ea50b` ghi đầu vào `bronze.raw_telemetry_a`, `bronze.raw_telemetry_b`, `bronze.trips_raw` phiên bản 0 và `bronze.video_files` phiên bản 1; đầu ra trung gian gồm `silver.frames` (phiên bản 27 sau thí nghiệm chạy lại), `silver.telemetry`, `silver.frames_flagged`, `silver.frame_telemetry` (đều phiên bản 0). SHA-256 video A là `636ba1a98dfc5ba665d1c935e1d2064e69f4df360ff9ffbd15795957d5e7e9aa`, B là `bfa62703f645ff77a8578ae3fc74a00881140d38a404d43c8e2af265bbee9fdc`. Để tái tạo, cần đúng hai video, phiên bản bảng đầu vào, MSSV, luật loại khung và luật chia theo trip ghi trong manifest; hash manifest giúp kiểm tra file xuất ra.
+Manifest của `6c42b24ea50b` sau lượt DAG từ lake trống ghi đầu vào `bronze.raw_telemetry_a`, `bronze.raw_telemetry_b`, `bronze.trips_raw` phiên bản 0 và `bronze.video_files` phiên bản 1; đầu ra trung gian gồm `silver.frames` phiên bản 25, `silver.telemetry`, `silver.frames_flagged`, `silver.frame_telemetry` (đều phiên bản 0). SHA-256 video A là `636ba1a98dfc5ba665d1c935e1d2064e69f4df360ff9ffbd15795957d5e7e9aa`, B là `bfa62703f645ff77a8578ae3fc74a00881140d38a404d43c8e2af265bbee9fdc`. Để tái tạo, cần đúng hai video, phiên bản bảng đầu vào, MSSV, luật loại khung và luật chia theo trip ghi trong manifest; hash manifest giúp kiểm tra file xuất ra.
 
 ## Bước 5 · Điều phối và phục vụ
 
