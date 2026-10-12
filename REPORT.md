@@ -28,12 +28,12 @@ Liệt kê **ít nhất 4 khác biệt** giữa telemetry nguồn A và nguồn 
 ### Câu 2
 Pipeline đưa hai nguồn về một schema như thế nào (đơn vị, kiểu thời gian, **độ lệch đồng hồ**)? Bằng chứng nào trong kết quả bước 2 cho thấy đã đúng? Dán bảng quarantine của bạn (số dòng theo từng lý do, từng drive) và giải thích vì sao dòng lỗi vào `rejects` thay vì bị xoá.
 
-(trả lời ở đây)
+Staging đổi tên cột về cùng schema, đổi tốc độ B từ km/h sang m/s, chuyển `timestamp_ms` thành UTC và trừ độ lệch đồng hồ 1500 ms khai báo trong `sources.json`. Sau chuẩn hóa có 2968 dòng sạch A và 3181 dòng sạch B; mẫu đầu của B là `2025-10-08 14:30:00.009+00:00`, cách mốc video 9 ms. Mỗi drive có 20 dòng `duplicate`, 30 dòng `speed_missing`, 3 dòng `speed_out_of_range` trong `silver_telemetry_rejects`. Giữ chúng cùng lý do cách ly cho phép kiểm toán và sửa nguồn; 2968+53=3021 và 3181+53=3234 chứng tỏ không mất dòng âm thầm.
 
 ### Câu 3
 Vì sao test `max_gap_ms` là `warn` còn `in_range` là `error`? Kết quả thí nghiệm `break-gate` của bạn (`break_gate.json`): test nào bắt được, bao nhiêu dòng, và điều đó cho biết gì về vai trò của "cổng chất lượng"?
 
-(trả lời ở đây)
+`max_gap_ms` cảnh báo khoảng mất tín hiệu của cảm biến nhưng dữ liệu còn lại vẫn dùng được; lần chạy này test đó có 1 WARN. `in_range` là lỗi vì tốc độ ngoài 0..70 m/s không được đi tiếp. Trong thí nghiệm `break-gate`, nới luật làm sạch lên 1000 m/s khiến test `in_range_silver_telemetry_speed_mps__70__0` bắt **6 dòng**: `PASS=5 WARN=1 ERROR=1`. Khôi phục luật gốc cho `PASS=6 WARN=1 ERROR=0`. Cổng test độc lập với luật làm sạch đã chặn dữ liệu vô lý lọt vào silver.
 
 ## Bước 3 · Silver frames
 
