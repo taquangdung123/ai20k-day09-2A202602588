@@ -58,17 +58,17 @@ Khung đen gần như không có thông tin ảnh nên bị loại (A: 6, B: 4);
 ### Câu 6
 Dựa vào `leakage.json`: chia theo khung hình làm bao nhiêu trip bị chia cắt, so với chia theo trip? Vì sao điều này làm điểm kiểm thử đẹp một cách giả tạo?
 
-(trả lời ở đây)
+Trong 1019 khung đáng dùng thuộc 26 trip, phép chia theo từng khung làm **26/26 trip** xuất hiện ở nhiều split và cả 26 trip đều có khung ở train lẫn test. Chia theo trip của gold làm **0 trip** bị chia cắt. Các khung gần nhau trong một chuyến có cùng cảnh và điều kiện lái; nếu cảnh đã xuất hiện ở train, test trên khung của chính cảnh đó sẽ cho điểm đẹp giả tạo, không đo được khả năng tổng quát hóa sang chuyến mới.
 
 ### Câu 7
 Vì sao `dataset_version` là **băm nội dung** chứ không phải ngày giờ hay số đếm? Hai lần chạy liên tiếp cho kết quả gì? Vì sao `dataset_version` của bạn **khác** bạn bè dù cùng dữ liệu (liên hệ MSSV)?
 
-(trả lời ở đây)
+`dataset_version` băm danh sách `frame_id|split` theo thứ tự ổn định, nên mô tả chính xác thành viên và cách chia của dataset; ngày giờ hay số đếm có thể đổi dù nội dung không đổi. Hai lượt `export-dataset` liên tiếp đều cho `6c42b24ea50b`, 1019 khung (train 721, val 153, test 145) và cùng `manifest_sha256` `b9d75a19c42a784a67623ecbb1903e59ba4bc5cef677c894e0937502071511db`. MSSV `2A202602588` được trộn vào thứ tự xếp trip nên split, và do đó hash nội dung, khác MSSV khác.
 
 ### Câu 8
 Đọc phần `lineage` trong `manifest.json` của dataset bạn. Trả lời "dataset này được tạo từ dữ liệu nào?" bằng chính nội dung đó. Nếu một người hỏi 3 tháng sau, thông tin nào giúp tái tạo lại đúng dataset này?
 
-(trả lời ở đây)
+Manifest của `6c42b24ea50b` ghi đầu vào `bronze.raw_telemetry_a`, `bronze.raw_telemetry_b`, `bronze.trips_raw` phiên bản 0 và `bronze.video_files` phiên bản 1; đầu ra trung gian gồm `silver.frames` (phiên bản 27 sau thí nghiệm chạy lại), `silver.telemetry`, `silver.frames_flagged`, `silver.frame_telemetry` (đều phiên bản 0). SHA-256 video A là `636ba1a98dfc5ba665d1c935e1d2064e69f4df360ff9ffbd15795957d5e7e9aa`, B là `bfa62703f645ff77a8578ae3fc74a00881140d38a404d43c8e2af265bbee9fdc`. Để tái tạo, cần đúng hai video, phiên bản bảng đầu vào, MSSV, luật loại khung và luật chia theo trip ghi trong manifest; hash manifest giúp kiểm tra file xuất ra.
 
 ## Bước 5 · Điều phối và phục vụ
 
